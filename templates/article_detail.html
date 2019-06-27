@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check the article uploaded</title>
+    <style type="text/css">
+        body{
+            align-items: center;
+            vertical-align: center;
+            background-color: #f6f6f6;
+        }
+        .main_board{
+            margin-top: 10px;
+            width: 90%;
+            margin-left: 5%;
+            margin-right: 5%;
+        }
+        .btn{
+            border: 0;
+            border-radius: 10px;
+            color: white;
+            background-color: #d0b1ed;
+            font-size: 40px;
+            padding: 10px 0px 10px 0px;
+            width: 80%;
+        }
+
+        .title{
+            background-color: white;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 0px;
+            width: 100%;
+            font-size: 50px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            color: #d982ed;
+            text-align: center;
+        }
+        .image{
+            border-radius: 10px;
+            width: 80%;
+            padding: 0 10% 0 10%;
+            background-color: white;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        textarea{
+            width: 95%;
+            background-color: white;
+            font-size: 25px;
+            padding: 10px 20px 10px 20px;
+            border-radius: 20px;
+            border: none;
+        }
+        .article{
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="../../static/src/jquery-2.2.4.min.js"></script>
+</head>
+<body>
+    <div class="main_board">
+        <!--title-->
+        <input type="text" class="title" id="title" placeholder="标题..." readonly="true"/>
+
+        <!--image-->
+        <img src="" id="image" class="image"/>
+
+        <!--text-->
+        <div class="article" id="article">
+
+        </div>
+
+        <!--judge-->
+        <table width="100%;">
+            <tr style="width: 100%; ">
+                <td style="width: 50%; text-align: center;">
+                   <button class="btn" id="reject" style="background-color: red;">Reject</button>
+                </td>
+                <td style="width: 50%; text-align: center;">
+                    <button class="btn" id="pass" style="background-color: #00ff00;">Pass</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+<script type="text/javascript">
+    var usr_id = window.location.href.split("?")[1].split("&")[0].split("=")[1]
+    var dir = window.location.href.split("?")[1].split("&")[1].split("=")[1]
+
+    function onload() {
+        $.ajax({
+            type: 'GET',
+            url: '/../Mini_Bookhouse/manager/get_article_checking',
+            data: {
+                'usr_id': usr_id,
+                'dir': dir,
+                'category': 'Articles'
+            },
+            dataType: 'json',
+            success: function (data) {
+                var title = JSON.stringify(data.txt[0]);
+                $('#title').val(data.txt[0]);
+                $('#image').attr('src', '/static/Users/'+usr_id+'/Articles/'+dir+'/'+data.img);
+
+                var p_s = data.txt;
+                var article = document.getElementById("article");
+                for (var i = 1; i < p_s.length; ++i){
+                    var textarea = document.createElement('textarea');
+                    textarea.value = p_s[i];
+
+                    article.appendChild(textarea);
+                }
+            }
+        })
+    }
+
+    window.onload = onload();
+
+    $('#pass').on("click", function () {
+        $.ajax({
+            type: 'GET',
+            url: '/../Mini_Bookhouse/manager/judge',
+            data: {
+                'usr_id': usr_id,
+                'count': dir,
+                'category': 'article',
+                'res': 'pass'
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.state);
+                history.go(-1);
+            }
+        })
+    })
+    $('#reject').on("click", function () {
+        console.log("asda")
+        $.ajax({
+            type: 'GET',
+            url: '/../Mini_Bookhouse/manager/judge',
+            data: {
+                'usr_id': usr_id,
+                'count': dir,
+                'category': 'article',
+                'res': 'reject'
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.state);
+                history.go(-1);
+            }
+        })
+    })
+</script>
+
+</body>
+</html>

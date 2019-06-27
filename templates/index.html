@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微书斋的管理员</title>
+    <style type="text/css">
+        td{
+            color: white;
+            border: white solid 2px;
+            font-size: 40px;
+            width: 50%;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        .items{
+            width: 90%;
+            margin-left: 5%;
+            margin-right: 5%;
+            height: 90%;
+
+            margin-top: 20px;
+            overflow: scroll;
+            border: none;
+        }
+        .dd{
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+        .item{
+            margin-top: 5px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.49);
+            border-radius: 5px;
+            color: #392f61;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            border-collapse: collapse;
+
+        }
+        .cell_left{
+            border-radius: 5px 0 0 5px;
+        }
+        .cell_right{
+            border-radius: 0 5px 5px 0;
+        }
+        .num{
+            font-weight: bolder;
+            color: #383a67;
+            font-size: 50px;
+            font-style: italic;
+            width: 10%;
+        }
+        td{
+            padding: 0px;
+        }
+        .txt{
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+    <!--bg-->
+<div id="bg" style="z-index:1;position: absolute; left: 0px; top: 0px;width: 100%; height: 100%;">
+    <img src="../static/src/usr_bg.png" width="100%" height="100%"/>
+</div>
+<div style="z-index: 2; width: 100%; height: 100%; top: 0px; left: 0px; position: absolute;">
+    <table style="width: 90%; margin-left: 5%; margin-right: 5%; margin-top: 50px;">
+        <tr >
+            <td id="option_art" class="option" style="background-color: #392f61; color: white;border-radius: 10px 0 0 10px; border-right: none;">
+                乐读
+            </td>
+            <td id="option_aud" class="option" style="color: #392f61; border-radius: 0 10px 10px 0; border-left: none; background-color: white;">
+                悦听
+            </td>
+        </tr>
+    </table>
+    <div class="items" id="items">
+
+    </div>
+</div>
+
+<!--javascript-->
+<script type="text/javascript" src="../static/src/jquery-2.2.4.min.js"></script>
+<script type="text/javascript">
+    /**
+     * global variables
+     */
+    var state = -1; // +1 for articles; -1 for audios
+    var articles = [];
+    var audios = [];
+    var item_board = document.getElementById("items");
+
+    /**
+     * 事件函数
+     */
+    $("#option_aud").on("click", function () {
+        if (state === -1){
+            // do nothing
+        }else{
+            state = -1;
+            $("#option_aud").css("background-color", "white");
+            $("#option_aud").css("color", "#392f61");
+            $("#option_art").css("background-color", "#392f61");
+            $("#option_art").css("color", "white");
+
+            item_board.innerHTML = '';
+            for (var i = 0; i < audios.length; ++i){
+                var table = document.createElement('table');
+                table.setAttribute('id', ''+i);
+                table.setAttribute('class', 'item');
+                var row = table.insertRow();
+                row.setAttribute('class', audios[i].dir)
+                var num = row.insertCell(0);
+                num.setAttribute('class', 'num cell_left');
+                var num_t = document.createElement('p');
+                num_t.setAttribute('class', 'txt');
+
+                var txt = document.createTextNode(''+i);
+                num_t.appendChild(txt);
+                num.appendChild(num_t);
+
+                var usr = row.insertCell(1);
+                usr.setAttribute('class', 'cell_right');
+                num_t = document.createElement('p');
+                txt = document.createTextNode(audios[i].usr_id);
+                num_t.appendChild(txt);
+                usr.appendChild(num_t);
+
+                table.onclick= function(){
+                    console.log('http://'+window.location.host + '/Mini_Bookhouse/manager/audio_detail')
+                    window.location.href = 'http://'+window.location.hostname+':'+window.location.port+'/Mini_Bookhouse/manager/audio_detail?usr_id='+this.getElementsByTagName('p')[1].innerHTML+'&dir='+ this.getElementsByTagName('tr')[0].className;
+
+                }
+
+                item_board.appendChild(table);
+            }
+        }
+    })
+    $("#option_art").on("click", function () {
+        if (state === +1){
+            // do nothing
+        }else{
+            state = +1;
+            $("#option_art").css("background-color", "white");
+            $("#option_art").css("color", "#392f61");
+            $("#option_aud").css("background-color", "#392f61");
+            $("#option_aud").css("color", "white");
+
+            item_board.innerHTML = '';
+            for (var i = 0; i < articles.length; ++i){
+                var table = document.createElement('table');
+                table.setAttribute('id', ''+i);
+                table.setAttribute('class', 'item');
+                var row = table.insertRow();
+                row.setAttribute('class', articles[i].dir)
+                var num = row.insertCell(0);
+                num.setAttribute('class', 'num cell_left');
+                var num_t = document.createElement('p');
+                num_t.setAttribute('class', 'txt');
+
+                var txt = document.createTextNode(''+i);
+                num_t.appendChild(txt);
+                num.appendChild(num_t);
+
+                var usr = row.insertCell(1);
+                usr.setAttribute('class', 'cell_right');
+                num_t = document.createElement('p');
+                txt = document.createTextNode(articles[i].usr_id);
+                num_t.appendChild(txt);
+                usr.appendChild(num_t);
+
+                table.onclick= function(){
+                    console.log('http://'+window.location.host + '/Mini_Bookhouse/manager/article_detail')
+                    window.location.href = 'http://'+window.location.hostname+':'+window.location.port+'/Mini_Bookhouse/manager/article_detail?usr_id='+this.getElementsByTagName('p')[1].innerHTML+'&dir='+ this.getElementsByTagName('tr')[0].className;
+
+                }
+
+                item_board.appendChild(table);
+            }
+        }
+    })
+
+    /**
+     * onLoad
+     */
+    function onload(){
+        $.ajax({
+            type: 'GET',
+            url: '/../Mini_Bookhouse/manager/get_checking',
+            data: {},
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.state);
+                if (data.state == 1){
+                    articles = data.articles;
+                    audios = data.audios;
+                    // console.log(audios)
+                    // initialize the audios list
+                    item_board.innerHTML = '';
+                    for (var i = 0; i < audios.length; ++i){
+                        var table = document.createElement('table');
+                        table.setAttribute('id', ''+i);
+                        table.setAttribute('class', 'item');
+                        var row = table.insertRow();
+                        row.setAttribute('class', audios[i].dir)
+                        var num = row.insertCell(0);
+                        num.setAttribute('class', 'num cell_left');
+                        var num_t = document.createElement('p');
+                        num_t.setAttribute('class', 'txt');
+
+                        var txt = document.createTextNode(''+i);
+                        num_t.appendChild(txt);
+                        num.appendChild(num_t);
+
+                        var usr = row.insertCell(1);
+                        usr.setAttribute('class', 'cell_right');
+                        num_t = document.createElement('p');
+                        txt = document.createTextNode(audios[i].usr_id);
+                        num_t.appendChild(txt);
+                        usr.appendChild(num_t);
+                        // var cnt = row.insertCell(2);
+
+                        // click function
+                        table.onclick= function(){
+                            console.log('http://'+window.location.host + '/Mini_Bookhouse/manager/audio_detail')
+                            window.location.href = 'http://'+window.location.hostname+':'+window.location.port+'/Mini_Bookhouse/manager/audio_detail?usr_id='+this.getElementsByTagName('p')[1].innerHTML+'&dir='+ this.getElementsByTagName('tr')[0].className;
+                            // http://127.0.0.1:5000/Mini_Bookhouse/manager/audio_detail
+                            /***/
+                            // console.log(this.getElementsByTagName('p')[1].innerHTML)
+                            // console.log(this.getElementsByTagName('tr')[0].className)
+                            /*
+                            $.ajax({
+                                type: 'GET',
+                                url: '/../Mini_Bookhouse/manager/checking_audio_detail',
+                                data: {
+                                    'usr_id': this.getElementsByTagName('p')[1].innerHTML,
+                                    'dir': this.getElementsByTagName('tr')[0].className
+                                },
+                                dataType: 'json',
+                                success: function (data) {
+                                    window.location.href = 'audio_detail';
+                                }
+                            })
+                            */
+
+                        }
+
+                        item_board.appendChild(table);
+                    }
+                }
+            }
+        })
+
+    }
+    window.onload = onload();
+
+
+</script>
+
+</body>
+</html>
